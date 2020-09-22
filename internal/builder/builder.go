@@ -13,15 +13,18 @@ import (
 	"time"
 )
 
+const (
+	forecastDuration = 48 * time.Hour
+)
+
 // CsvMeteogram returns a Metrogram in CSV format.
 func CsvMeteogram(forecast *noaa.GridpointForecastResponse) (string, error) {
 	records := [][]string{
 		{"Time", "Temperature", "RelativeHumidity", "Dewpoint", "HeatIndex", "WindChill", "WindSpeed", "WindDirection", "WindGust", "SkyCover", "ProbabilityOfPrecipitation"},
 	}
-	start := time.Now()
-	end := time.Now().Add(48 * time.Hour)
-	for i := 0; !start.Add(time.Duration(i) * time.Hour).Round(time.Hour).After(end); i++ {
-		instant := start.Add(time.Duration(i) * time.Hour).Round(time.Hour)
+	start := time.Now().Truncate(time.Hour)
+	end := start.Add(forecastDuration)
+	for instant := start; !instant.After(end); instant = instant.Add(time.Hour) {
 		record := []string{instant.Format(time.RFC3339)}
 		for _, k := range records[0][1:] {
 			f := reflect.ValueOf(*forecast).FieldByName(k)
