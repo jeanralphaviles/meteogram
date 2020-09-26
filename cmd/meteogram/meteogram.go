@@ -15,6 +15,7 @@ var (
 )
 
 func main() {
+	flag.Parse()
 	r := mux.NewRouter()
 	r.HandleFunc("/meteogram/{latitude},{longitude}", h.Meteogram).
 		Methods("GET")

@@ -4,6 +4,7 @@ package builder
 import (
 	"bytes"
 	"encoding/csv"
+	"flag"
 	"fmt"
 	"github.com/icodealot/noaa"
 	"github.com/rickb777/date/period"
@@ -13,8 +14,8 @@ import (
 	"time"
 )
 
-const (
-	forecastDuration = 48 * time.Hour
+var (
+	forecastDuration = flag.Duration("forecast_duration", 48*time.Hour, "How far into the future should a forecast be.")
 )
 
 // CsvMeteogram returns a Metrogram in CSV format.
@@ -23,7 +24,7 @@ func CsvMeteogram(forecast *noaa.GridpointForecastResponse) (string, error) {
 		{"Time", "Temperature", "RelativeHumidity", "Dewpoint", "HeatIndex", "WindChill", "WindSpeed", "WindDirection", "WindGust", "SkyCover", "ProbabilityOfPrecipitation"},
 	}
 	start := time.Now().Truncate(time.Hour)
-	end := start.Add(forecastDuration)
+	end := start.Add(*forecastDuration)
 	for instant := start; !instant.After(end); instant = instant.Add(time.Hour) {
 		record := []string{instant.Format(time.RFC3339)}
 		for _, k := range records[0][1:] {
