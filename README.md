@@ -33,10 +33,10 @@ Time,Temperature,RelativeHumidity,Dewpoint,HeatIndex,WindChill,WindSpeed,WindDir
 
 ```bash
 Usage of ./meteogram:
+  -address string
+        Address to listen on. (default ":8080")
   -forecast_duration duration
         How far into the future should a forecast be. (default 48h0m0s)
-  -port string
-        Port to listen on. (default ":8080")
 ```
 
 ## See Also

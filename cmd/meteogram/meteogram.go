@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	port = flag.String("port", ":8080", "Port to listen on.")
+	port = flag.String("address", ":8080", "Address to listen on.")
 )
 
 func main() {
@@ -20,5 +20,6 @@ func main() {
 	r.HandleFunc("/meteogram/{latitude},{longitude}", h.Meteogram).
 		Methods("GET")
 	h := handlers.LoggingHandler(os.Stdout, r)
+	log.Printf("Starting HTTP server listening on %s...", *port)
 	log.Fatal(http.ListenAndServe(*port, h))
 }
