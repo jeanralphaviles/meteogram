@@ -57,7 +57,7 @@ func valueAt(g noaa.GridpointForecastTimeSeries, t time.Time) (float64, error) {
 		}
 		duration, err := period.Parse(sections[1], true)
 		if err != nil {
-			return math.NaN(), fmt.Errorf("could not ISO8601 duration: %q", sections[1])
+			return math.NaN(), fmt.Errorf("could not parse ISO8601 duration: %q", sections[1])
 		}
 		end, _ := duration.AddTo(start)
 		// t is equal to either start or end time or lies between the two.
