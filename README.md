@@ -4,6 +4,13 @@ Meteogram returns detailed weather forecasts for a given location. US only.
 
 ## API
 
+Meteogram is deployed as an [App Engine](https://cloud.google.com/appengine)
+app for public use.
+
+```http
+https://xenon-antonym-213304.uc.r.appspot.com
+```
+
 ### /meteogram
 
 Retrieves 48 hours of weather forecasts for the location given its
@@ -17,6 +24,8 @@ GET /meteogram/{latitude},{longitude}
 ```
 
 #### Response
+
+[Try it!](https://xenon-antonym-213304.uc.r.appspot.com/meteogram/24.5465,-81.7974)
 
 ```csv
 Time,Temperature,RelativeHumidity,Dewpoint,HeatIndex,WindChill,WindSpeed,WindDirection,WindGust,SkyCover,ProbabilityOfPrecipitation
