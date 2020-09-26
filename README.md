@@ -39,6 +39,26 @@ Usage of ./meteogram:
         How far into the future should a forecast be. (default 48h0m0s)
 ```
 
+## Docker
+
+* Run the Docker container.
+
+  ```bash
+  docker run --rm --name meteogram --publish 8080:8080 jraviles/meteogram:latest
+  ```
+
+* Build your own Docker image.
+
+  ```bash
+  docker build --tag jraviles/meteogram:latest .
+  ```
+
+* Publish image to Docker Hub.
+
+  ```bash
+  docker push jraviles/meteogram:latest
+  ```
+
 ## See Also
 
 * [weather.gov API](https://weather-gov.github.io/api/)
@@ -47,3 +67,4 @@ Usage of ./meteogram:
 ## Author
 
 [Jean-Ralph Aviles](http://jr.expert)
+
