@@ -16,7 +16,8 @@ var (
 
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/meteogram/{latitude},{longitude}", h.Meteogram)
+	r.HandleFunc("/meteogram/{latitude},{longitude}", h.Meteogram).
+		Methods("GET")
 	h := handlers.LoggingHandler(os.Stdout, r)
 	log.Fatal(http.ListenAndServe(*port, h))
 }
