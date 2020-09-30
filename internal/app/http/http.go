@@ -6,6 +6,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/icodealot/noaa"
 	"github.com/jeanralphaviles/meteogram/internal/builder"
+	"github.com/russross/blackfriday"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -24,4 +26,15 @@ func Meteogram(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Write([]byte(csv))
+}
+
+// Readme renders readme.md to the user as a guide to Meteogram.
+func Readme(w http.ResponseWriter, r *http.Request) {
+	md, err := ioutil.ReadFile("readme.md")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	html := blackfriday.MarkdownCommon(md)
+	w.Write(html)
 }

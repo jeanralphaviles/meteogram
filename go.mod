@@ -7,4 +7,5 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/icodealot/noaa v0.0.0-20200922031024-d8864beee03e
 	github.com/rickb777/date v1.14.0
+	github.com/russross/blackfriday v1.5.2
 )
