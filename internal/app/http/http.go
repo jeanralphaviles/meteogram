@@ -30,7 +30,7 @@ func Meteogram(w http.ResponseWriter, r *http.Request) {
 
 // Readme renders readme.md to the user as a guide to Meteogram.
 func Readme(w http.ResponseWriter, r *http.Request) {
-	md, err := ioutil.ReadFile("readme.md")
+	md, err := ioutil.ReadFile("README.md")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
