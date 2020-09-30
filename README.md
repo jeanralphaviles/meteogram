@@ -68,6 +68,14 @@ Usage of ./meteogram:
   docker push jraviles/meteogram:latest
   ```
 
+## App Engine
+
+* Deploy
+
+  ```bash
+  gcloud app deploy
+  ```
+
 ## See Also
 
 * [weather.gov API](https://weather-gov.github.io/api/)
@@ -76,4 +84,3 @@ Usage of ./meteogram:
 ## Author
 
 [Jean-Ralph Aviles](http://jr.expert)
-
