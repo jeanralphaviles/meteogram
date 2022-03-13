@@ -16,24 +16,35 @@ import (
 
 var (
 	forecastDuration = flag.Duration("forecast_duration", 48*time.Hour, "How far into the future should a forecast be.")
+	labels           = []string{
+		"Time", "Temperature", "Dewpoint", "MaxTemperature", "MinTemperature",
+		"RelativeHumidity", "ApparentTemperature", "HeatIndex", "WindChill",
+		"SkyCover", "WindDirection", "WindSpeed", "WindGust",
+		"ProbabilityOfPrecipitation", "QuantitativePrecipitation",
+	}
+	weatherConditions = []string{
+		"Coverage", "Weather", "Intensity",
+	}
 )
 
 // CsvMeteogram returns a Metrogram in CSV format.
 func CsvMeteogram(forecast *noaa.GridpointForecastResponse) (string, error) {
-	records := [][]string{
-		{"Time", "Temperature", "RelativeHumidity", "Dewpoint", "HeatIndex", "WindChill", "WindSpeed", "WindDirection", "WindGust", "SkyCover", "ProbabilityOfPrecipitation"},
-	}
+	records := [][]string{append(labels, weatherConditions...)}
 	start := time.Now().Truncate(time.Hour)
 	end := start.Add(*forecastDuration)
 	for instant := start; !instant.After(end); instant = instant.Add(time.Hour) {
 		record := []string{instant.Format(time.RFC3339)}
-		for _, k := range records[0][1:] {
+		for _, k := range labels[1:] {
 			f := reflect.ValueOf(*forecast).FieldByName(k)
 			v, err := valueAt(f.Interface().(noaa.GridpointForecastTimeSeries), instant)
 			if err != nil {
 				return "", err
 			}
-			record = append(record, fmt.Sprintf("%.04f", v))
+			if math.IsNaN(v) {
+				record = append(record, "")
+			} else {
+				record = append(record, fmt.Sprintf("%.04f", v))
+			}
 		}
 		records = append(records, record)
 	}
@@ -65,5 +76,5 @@ func valueAt(g noaa.GridpointForecastTimeSeries, t time.Time) (float64, error) {
 			return v.Value, nil
 		}
 	}
-	return math.NaN(), fmt.Errorf("value at %q not found", t)
+	return math.NaN(), nil
 }
