@@ -7,9 +7,7 @@ Meteogram returns detailed weather forecasts for a given location. US only.
 Meteogram is deployed as an [App Engine](https://cloud.google.com/appengine)
 app for public use.
 
-```http
 https://xenon-antonym-213304.uc.r.appspot.com
-```
 
 ### /meteogram
 
