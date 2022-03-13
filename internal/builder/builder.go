@@ -46,6 +46,14 @@ func CsvMeteogram(forecast *noaa.GridpointForecastResponse) (string, error) {
 				record = append(record, fmt.Sprintf("%.04f", v))
 			}
 		}
+		v, err := conditionsAt(*forecast, instant)
+		for _, k := range weatherConditions {
+			if err != nil {
+				record = append(record, "")
+			} else {
+				record = append(record, reflect.ValueOf(*v).FieldByName(k).String())
+			}
+		}
 		records = append(records, record)
 	}
 	b := new(bytes.Buffer)
@@ -77,4 +85,37 @@ func valueAt(g noaa.GridpointForecastTimeSeries, t time.Time) (float64, error) {
 		}
 	}
 	return math.NaN(), nil
+}
+
+type Conditions struct {
+	Coverage  string
+	Weather   string
+	Intensity string
+}
+
+func conditionsAt(w noaa.GridpointForecastResponse, t time.Time) (*Conditions, error) {
+	for _, v := range w.Weather.Values {
+		sections := strings.Split(v.ValidTime, "/")
+		if len(sections) != 2 {
+			return nil, fmt.Errorf("not a valid ISO8601 interval: %q", v.ValidTime)
+		}
+		start, err := time.Parse(time.RFC3339, sections[0])
+		if err != nil {
+			return nil, fmt.Errorf("could not parse time: %q", sections[0])
+		}
+		duration, err := period.Parse(sections[1], true)
+		if err != nil {
+			return nil, fmt.Errorf("could not parse ISO8601 duration: %q", sections[1])
+		}
+		end, _ := duration.AddTo(start)
+		// t is equal to either start or end time or lies between the two.
+		if (t.Equal(start) || t.Equal(end)) || (t.After(start) && t.Before(end)) {
+			return &Conditions{
+				v.Value[0].Coverage,
+				v.Value[0].Weather,
+				v.Value[0].Intensity,
+			}, nil
+		}
+	}
+	return nil, fmt.Errorf("weather conditions at %q not found", t)
 }
