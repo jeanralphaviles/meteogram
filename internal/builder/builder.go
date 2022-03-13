@@ -34,9 +34,10 @@ func CsvMeteogram(forecast *noaa.GridpointForecastResponse) (string, error) {
 	end := start.Add(*forecastDuration)
 	for instant := start; !instant.After(end); instant = instant.Add(time.Hour) {
 		record := []string{instant.Format(time.RFC3339)}
+		// Excludes "Time"
 		for _, k := range labels[1:] {
-			f := reflect.ValueOf(*forecast).FieldByName(k)
-			v, err := valueAt(f.Interface().(noaa.GridpointForecastTimeSeries), instant)
+			f := reflect.ValueOf(*forecast).FieldByName(k).Interface().(noaa.GridpointForecastTimeSeries)
+			v, err := valueAt(f, instant)
 			if err != nil {
 				return "", err
 			}
@@ -55,6 +56,16 @@ func CsvMeteogram(forecast *noaa.GridpointForecastResponse) (string, error) {
 			}
 		}
 		records = append(records, record)
+		// Append units to CSV header.
+		if instant == start {
+			for i, k := range labels[1:] {
+				f := reflect.ValueOf(*forecast).FieldByName(k).Interface().(noaa.GridpointForecastTimeSeries)
+				if f.Uom != "" {
+					unit := humanizeUnit(f.Uom)
+					records[0][i+1] = fmt.Sprintf("%s (%s)", records[0][i+1], unit)
+				}
+			}
+		}
 	}
 	b := new(bytes.Buffer)
 	w := csv.NewWriter(b)
@@ -118,4 +129,24 @@ func conditionsAt(w noaa.GridpointForecastResponse, t time.Time) (*Conditions, e
 		}
 	}
 	return nil, fmt.Errorf("weather conditions at %q not found", t)
+}
+
+// humanizeUnit converts a subset of WMO units of measure used by the
+// weather.gov API into a more human readable form. See http://codes.wmo.int/common/unit.
+func humanizeUnit(unit string) string {
+	switch unit {
+	case "wmoUnit:degC":
+		return "C"
+	case "wmoUnit:percent":
+		return "%"
+	case "wmoUnit:degree_(angle)":
+		return "angle"
+	case "wmoUnit:km_h-1":
+		return "km/h"
+	case "wmoUnit:mm":
+		return "mm"
+	default:
+		fmt.Printf("Unknown unit: %q", unit)
+		return unit
+	}
 }
