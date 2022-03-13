@@ -35,6 +35,6 @@ func Readme(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	html := blackfriday.MarkdownCommon(md)
+	html := blackfriday.Run(md)
 	w.Write(html)
 }
