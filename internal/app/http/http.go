@@ -7,8 +7,8 @@ import (
 	"github.com/icodealot/noaa"
 	"github.com/jeanralphaviles/meteogram/internal/builder"
 	"github.com/russross/blackfriday"
-	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 // Meteogram handles requests to /meteogram, returning Meteograms.
@@ -30,7 +30,7 @@ func Meteogram(w http.ResponseWriter, r *http.Request) {
 
 // Readme renders readme.md to the user as a guide to Meteogram.
 func Readme(w http.ResponseWriter, r *http.Request) {
-	md, err := ioutil.ReadFile("README.md")
+	md, err := os.ReadFile("README.md")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

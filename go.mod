@@ -1,6 +1,6 @@
 module github.com/jeanralphaviles/meteogram
 
-go 1.17
+go 1.22
 
 require (
 	github.com/gorilla/handlers v1.5.1
